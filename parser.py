@@ -1,4 +1,6 @@
 from bs4 import BeautifulSoup
+import os
+
 
 soup = BeautifulSoup(open("civil_sr.html"))
 subs = soup.find_all("tr", class_="DataGridItem") + soup.find_all("tr", class_="DataGridAlternatingItem")
@@ -13,6 +15,9 @@ def retgrade(sub):
     return sub.find_all("td")[4].find_all("font")[0].contents[0]
 
 depname = soup.select("#LblExamName")[0].find_all("font")[0].contents[0]
+
+if not os.path.exists(depname):
+    os.makedirs(depname)
 #print(depname)
 arrsubs = {} #dict with the grades
 
@@ -31,6 +36,7 @@ def drawpie(arr,fname,depname):
     from reportlab.graphics.charts.piecharts import Pie
     from reportlab.graphics.shapes import Drawing, _DrawingEditorMixin
     from reportlab.lib.colors import Color, magenta, cyan
+    from reportlab.graphics import renderPM
 
     class pietests(_DrawingEditorMixin,Drawing):
         def __init__(self,width=400,height=200,*args,**kw):
@@ -47,7 +53,8 @@ def drawpie(arr,fname,depname):
     if __name__=="__main__":
         drawing = pietests()
         # you can do all sorts of things to drawing, lets just save it as pdf and png.
-        drawing.save(formats=['pdf'],outDir='./'+depname+'/'+fname,fnRoot=None)
+        #drawing.save(formats=['png'],outDir='./'+depname+'/'+fname,fnRoot=None)
+        renderPM.drawToFile(drawing,'./'+depname+'/'+fname,fmt='GIF',configPIL={})
 
 for subname in arrsubs.keys():
     for sub in arrsubs.values():
