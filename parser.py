@@ -12,6 +12,8 @@ def retsubname(sub):
 def retgrade(sub):
     return sub.find_all("td")[4].find_all("font")[0].contents[0]
 
+depname = soup.select("#LblExamName")[0].find_all("font")[0].contents[0]
+#print(depname)
 arrsubs = {} #dict with the grades
 
 #initialising the empty arrays
@@ -25,7 +27,7 @@ for sub in subs:
 #print(arrsubs)   #arrsubs is a dictionary with all the grades along with subject name
 #print(arrsubs.values()[0].values())   #printing the splitup of marks
 
-def drawpie(arr,fname):
+def drawpie(arr,fname,depname):
     from reportlab.graphics.charts.piecharts import Pie
     from reportlab.graphics.shapes import Drawing, _DrawingEditorMixin
     from reportlab.lib.colors import Color, magenta, cyan
@@ -35,7 +37,7 @@ def drawpie(arr,fname):
             Drawing.__init__(self,width,height,*args,**kw)
             self._add(self,Pie(),name='pie',validate=None,desc=None)
             self.pie.sideLabels       = 1
-            self.pie.labels           = ['S', 'A', 'B', 'C','D','E','F']
+            self.pie.labels           = ['A', 'C', 'B', 'E','D','F','S']
             self.pie.data             = arr
             self.pie.width            = 140
             self.pie.height           = 140
@@ -45,9 +47,10 @@ def drawpie(arr,fname):
     if __name__=="__main__":
         drawing = pietests()
         # you can do all sorts of things to drawing, lets just save it as pdf and png.
-        drawing.save(formats=['pdf'],outDir='./graphs/'+fname,fnRoot=None)
+        drawing.save(formats=['pdf'],outDir='./'+depname+'/'+fname,fnRoot=None)
 
 for subname in arrsubs.keys():
     for sub in arrsubs.values():
-        drawpie(arrsubs[subname].values(),subname)
+        drawpie(arrsubs[subname].values(),subname,depname)
 
+#print(arrsubs)
